@@ -1,0 +1,8 @@
+com\jaskaran\project2\Controller\BlogRestController.class
+com\jaskaran\project2\Controller\ProfileRestController.class
+com\jaskaran\project2\Controller\JobRestController.class
+com\jaskaran\project2\Controller\FriendRestController.class
+com\jaskaran\project2\Controller\ForumRestController.class
+com\jaskaran\project2\Controller\UserRestController.class
+com\jaskaran\project2\ConfigChat\WebSocketConfig.class
+com\jaskaran\project2\Controller\ChatRestController.class
