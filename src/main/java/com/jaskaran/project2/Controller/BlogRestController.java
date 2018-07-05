@@ -1,11 +1,7 @@
 package com.jaskaran.project2.Controller;
 
 import java.util.List;
-
-
-
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.jaskaran.project2.DAO.BlogDAO;
 import com.jaskaran.project2.Domain.Blog;
 import com.jaskaran.project2.Domain.BlogComment;
@@ -29,20 +24,6 @@ public class BlogRestController
 	@Autowired
 	HttpSession session;
 		
-	@RequestMapping("/blog/approvedList")
-	public ResponseEntity<List<Blog>> approvedBlogList()
-	{
-		List<Blog> approvedBlogs = blogDAO.approvedBlogsList();
-		if(approvedBlogs.isEmpty())
-		{
-			return new ResponseEntity<List<Blog>>(approvedBlogs, HttpStatus.NOT_FOUND);
-		}
-		else
-		{
-			return new ResponseEntity<List<Blog>>(approvedBlogs, HttpStatus.OK);
-		}
-	}
-	
 	@GetMapping("/blog/list")
 	public ResponseEntity<List<Blog>> blogList()
 	{
@@ -201,5 +182,21 @@ public class BlogRestController
 			return new ResponseEntity<BlogComment>(blogComment, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	@PostMapping("/blog/comment/delete/{blogcommentid}")
+	public ResponseEntity<BlogComment> commentdelete(@PathVariable int blogcommentid)
+	{
+		if(blogDAO.deletecomment(blogcommentid))
+		{
+			BlogComment b = new BlogComment();
+			return new ResponseEntity<BlogComment>(b, HttpStatus.OK);
+		}
+		else
+		{
+			BlogComment b = new BlogComment();
+			b = blogDAO.getBlogComment(blogcommentid);
+			return new ResponseEntity<BlogComment>(b, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	} 
 	
 }

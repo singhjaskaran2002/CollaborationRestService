@@ -1,9 +1,7 @@
 package com.jaskaran.project2.Controller;
 
 import java.util.List;
-
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.jaskaran.project2.DAO.JobDAO;
 import com.jaskaran.project2.DAO.UserDAO;
 import com.jaskaran.project2.Domain.Job;
@@ -37,15 +33,13 @@ public class JobRestController
 	@Autowired
 	HttpSession session;
 	
-	/***************************************************** Related to JOB *********************************************************/	
+	/************************ Related to JOB ********************/	
 	
-	
-//	http://localhost:8086/collaborationRestService/job/list
 	@RequestMapping("/job/list")
 	public ResponseEntity<List<Job>> jobList()
 	{		
 		List<Job> jobList = jobDAO.jobList(); 
-		if(jobList.isEmpty())							// if no jobs are available then it will send appropriate message 
+		if(jobList.isEmpty())		
 		{
 			job.setStatusMessage("no jobs are available");
 			jobList.add(job);
@@ -55,14 +49,11 @@ public class JobRestController
 		return new ResponseEntity<List<Job>>(jobList, HttpStatus.OK);
 	}
 	
-	
-	
-//	http://localhost:8086/collaborationRestService/job/get/{jobid}
 	@RequestMapping("/job/get/{jobid}")
 	public ResponseEntity<Job> getJob(@PathVariable int jobid)
 	{
 		Job job = jobDAO.getJob(jobid);
-		if(job == null)						// check whether the job with this id is exist or not
+		if(job == null)				
 		{
 			job = new Job();
 			job.setStatusMessage("No job is found with JobID: "+jobid);
@@ -76,38 +67,9 @@ public class JobRestController
 		}
 	}
 	
-	
-	
-//	http://localhost:8086/collaborationRestService/job/getOpenedJobList/{jobstatus}	
-	@RequestMapping("/job/getOpenedJobList/{jobstatus}")									// getting the opened job list to register for the jobs
-	public ResponseEntity<List<Job>> getOpenedJobList(@PathVariable char jobstatus)
-	{
-		List<Job> jobs = jobDAO.jobList(jobstatus);
-		if(jobs.isEmpty())
-		{
-			jobs.add(job);
-			job.setStatusMessage("no jobs are open");
-			return new ResponseEntity<List<Job>>(jobs, HttpStatus.NOT_FOUND);
-		}
-		
-		return new ResponseEntity<List<Job>>(jobs, HttpStatus.OK);
-	}
-	
-	
-	
-//	http://localhost:8086/collaborationRestService/job/post
 	@PostMapping("job/post")
 	public ResponseEntity<Job> saveJob(@RequestBody Job job)
-	{
-		/*Job job = new Job();
-		Job j = jobDAO.getJob(jobid);
-		if(j != null)	// if the job already exists with the same jobid
-		{
-			//job = new Job();
-			job.setStatusMessage("Job already exist with Jobid: "+job.getJobid());
-			return new ResponseEntity<Job>(job, HttpStatus.CONFLICT);
-		}*/
-		
+	{		
 		if(jobDAO.saveJob(job))
 		{
 			job.setStatusMessage("Job Posted Successfully");
@@ -121,8 +83,6 @@ public class JobRestController
 	}
 	
 	
-	
-//	http://localhost:8086/collaborationRestService/job/delete/{jobid}	
 	@DeleteMapping("/job/delete/{jobid}")
 	public ResponseEntity<Job> deleteJob(@PathVariable int jobid)
 	{
@@ -155,37 +115,12 @@ public class JobRestController
 		}
 	}
 	
-	
-//	http://localhost:8086/collaborationRestService/job/update
-	@PutMapping("/job/update")
-	public ResponseEntity<Job> updateJob(@RequestBody Job job)
-	{
-		if(jobDAO.updateJob(job))
-		{
-			job.setStatusMessage("Job Updated Successfully with Jobid: "+job.getJobid());
-			return new ResponseEntity<Job>(job, HttpStatus.OK);
-		}
-		else
-		{
-			job = new Job();
-			job.setStatusMessage("Cannot update Job right now with Jobid: "+job.getJobid()+", please try again later..");
-			return new ResponseEntity<Job>(job, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	
-//	http://localhost:8086/collaborationRestService/job/update/{email}/{jobstatus}
-	@PutMapping("/job/update/{jobid}/{jobstatus}")
-	public ResponseEntity<Job> updateJob(@PathVariable int jobid, @PathVariable char jobstatus)
+	@PutMapping("/job/update/{jobid}")
+	public ResponseEntity<Job> updateJob(@PathVariable int jobid)
 	{
 		job = jobDAO.getJob(jobid);
-		if(job == null)
-		{	//if job does not exist with this jobid
-			job.setStatusMessage("Job doesnt exist with this jobid: "+jobid);
-			return new ResponseEntity<Job>(job, HttpStatus.NOT_FOUND);
-		}
-		
-		job.setJobstatus(jobstatus);
+			
+		job.setJobstatus('C');
 		if(jobDAO.updateJob(job))
 		{
 			job.setStatusMessage("job updated succcessfully");
@@ -199,15 +134,8 @@ public class JobRestController
 	}
 	
 	
+/****************************** Related to JOB APPLICATION *************************/
 	
-	
-	
-	
-/***************************************************** Related to JOB APPLICATION *********************************************************/
-	
-
-	
-//	http://localhost:8086/collaborationRestService/job/registration
 	@PostMapping("/job/registration")
 	public ResponseEntity<JobApplication> jobRegistration(@RequestBody JobApplication jobApplication)
 	{
@@ -224,12 +152,6 @@ public class JobRestController
 		
 		if(!jobDAO.isJobAlreadyApplied(loginname, jobid))
 		{
-			JobApplication j = new JobApplication();
-			j.setStatusMessage("Already Registered");
-			return new ResponseEntity<JobApplication>(j, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		else
-		{
 			if(jobDAO.saveJobApplication(jobApplication))
 			{
 				jobApplication.setStatusMessage("Registered Successfully..");
@@ -240,8 +162,55 @@ public class JobRestController
 				jobApplication.setStatusMessage("Cannot Register right now, please try again later..");
 				return new ResponseEntity<JobApplication>(jobApplication, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
+			
+		}
+		else
+		{
+			JobApplication j = new JobApplication();
+			j.setStatusMessage("Already Registered");
+			return new ResponseEntity<JobApplication>(j, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
-
+	@RequestMapping("/job/approveApplication/{jobappid}")
+	public ResponseEntity<JobApplication> approveApplication(@PathVariable int jobappid)
+	{
+		if(jobDAO.approveApplication(jobappid))
+		{
+			JobApplication jobApplication = new JobApplication();
+			jobApplication.setStatusMessage("Approved");
+			return new ResponseEntity<JobApplication>(jobApplication, HttpStatus.ACCEPTED);
+		}
+		else
+		{
+			JobApplication jobApplication = new JobApplication();
+			jobApplication.setStatusMessage("Internal server error");
+			return new ResponseEntity<JobApplication>(jobApplication, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping("/job/rejectApplication/{jobappid}")
+	public ResponseEntity<JobApplication> rejectApplication(@PathVariable int jobappid)
+	{
+		JobApplication jobApplication = new JobApplication();
+		if(jobDAO.rejectApplication(jobappid))
+		{
+			jobApplication = jobDAO.getApplication(jobappid);
+			jobApplication.setStatusMessage("Rejected");
+			return new ResponseEntity<JobApplication>(jobApplication, HttpStatus.ACCEPTED);
+		}
+		else
+		{
+			jobApplication = jobDAO.getApplication(jobappid);
+			jobApplication.setStatusMessage("Internal server error");
+			return new ResponseEntity<JobApplication>(jobApplication, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping("job/appliedJobs")
+	public ResponseEntity<List<JobApplication>> appliedJobList()
+	{
+		List<JobApplication> jobapplist = jobDAO.jobApplications();
+		return new ResponseEntity<List<JobApplication>>(jobapplist, HttpStatus.OK);
+	}
 }

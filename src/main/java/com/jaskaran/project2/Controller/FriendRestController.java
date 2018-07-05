@@ -1,9 +1,7 @@
   package com.jaskaran.project2.Controller;
 
 import java.util.List;
-
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.jaskaran.project2.DAO.FriendDAO;
 import com.jaskaran.project2.DAO.UserDAO;
 import com.jaskaran.project2.Domain.Friend;
@@ -34,14 +30,11 @@ public class FriendRestController
 	@Autowired
 	private UserDAO userDAO;
 	
-	// http://localhost:8086/collaborationRestService/friend/list/{loginname}
 	@RequestMapping("friend/list")
 	public ResponseEntity<List<Friend>> showFriendList()
 	{
 		String loginname = (String) session.getAttribute("loginname");
-		
 		List<Friend> friends = friendDAO.friendList(loginname);
-		
 		if(friends.isEmpty())
 		{
 			Friend friend = new Friend();
@@ -59,7 +52,6 @@ public class FriendRestController
 	public ResponseEntity<List<Friend>> PendingFriendRequest()
 	{
 		String loginname = (String) session.getAttribute("loginname");
-				
 		List<Friend> friends = friendDAO.pendingFriendRequestList(loginname);
 		
 		if(friends.isEmpty())
@@ -76,12 +68,11 @@ public class FriendRestController
 	}
 	
 	@RequestMapping("friend/suggested")
-	public ResponseEntity<List<User>> suggestedPeople()						// @PathVariable String loginname
+	public ResponseEntity<List<User>> suggestedPeople()
 	{		
 		String loginname = (String) session.getAttribute("loginname");
-		
 		List<User> suggestedPeople = friendDAO.suggestedPeopleList(loginname);
-		
+	
 		if(suggestedPeople.isEmpty())
 		{
 			return new ResponseEntity<List<User>>(suggestedPeople, HttpStatus.NOT_FOUND);
@@ -162,5 +153,4 @@ public class FriendRestController
 			return new ResponseEntity<Friend>(friend, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
 }

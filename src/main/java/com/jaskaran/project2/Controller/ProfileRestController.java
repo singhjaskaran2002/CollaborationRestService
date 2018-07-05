@@ -1,7 +1,6 @@
 package com.jaskaran.project2.Controller;
 
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
 import com.jaskaran.project2.DAO.ProfileDAO;
 import com.jaskaran.project2.Domain.Profile;
 
@@ -25,14 +23,11 @@ public class ProfileRestController
 	@Autowired
 	HttpSession httpSession;
 	
-	// http://localhost:8086/collaborationRestService/profile/ImageUpload
 	@PostMapping("profile/ImageUpload")
 	public ResponseEntity<?> upload(@RequestParam("file") CommonsMultipartFile file)
 	{
 		Profile profile = new Profile();
-		
 		String loginname = (String) httpSession.getAttribute("loginname");
-			
 		profile.setLoginname(loginname);
 		profile.setProfilepicture(file.getBytes());
 		
@@ -46,8 +41,6 @@ public class ProfileRestController
 		}
 	}
 	
-	
-	// http://localhost:8086/collaborationRestService/profile/getProfilePicture/{loginname}
 	@RequestMapping("profile/getProfilePicture/{loginname}")
 	public @ResponseBody byte[] getProfilePicture(@PathVariable String loginname)
 	{
@@ -65,7 +58,6 @@ public class ProfileRestController
 		}
 	}
 	
-	// http://localhost:8086/collaborationRestService/friends/profile/getProfilePicture/{loginname}
 	@RequestMapping("friends/profile/getProfilePicture/{loginname}")
 	public @ResponseBody byte[] getFriendsProfilePicture(@PathVariable String loginname)
 	{
@@ -81,5 +73,4 @@ public class ProfileRestController
 			return image;
 		}
 	}
-
 }
