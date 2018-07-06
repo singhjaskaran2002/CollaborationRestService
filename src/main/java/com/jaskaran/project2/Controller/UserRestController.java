@@ -108,16 +108,16 @@ public class UserRestController
 		String loginname = (String) session.getAttribute("loginname");
 		
 		List<JobApplication> userJobList = jobDAO.jobApplicationList(loginname);
-		if(userJobList.isEmpty())
+		if(!userJobList.isEmpty())
 		{
-			 jobApplication.setStatusMessage("You have not applied for any job yet..");
-			 userJobList.add(jobApplication);
-			 return new ResponseEntity<List<JobApplication>>(userJobList, HttpStatus.NOT_FOUND);
+			jobApplication.setStatusMessage("User applied this job..");
+			return new ResponseEntity<List<JobApplication>>(userJobList, HttpStatus.OK);
 		}
 		else
 		{
-			 jobApplication.setStatusMessage("User applied this job..");
-			 return new ResponseEntity<List<JobApplication>>(userJobList, HttpStatus.OK);
+			jobApplication.setStatusMessage("You have not applied for any job yet..");
+			userJobList.add(jobApplication);
+			return new ResponseEntity<List<JobApplication>>(userJobList, HttpStatus.NOT_FOUND);
 		}
 	}
 }

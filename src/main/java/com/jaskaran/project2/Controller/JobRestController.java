@@ -211,6 +211,27 @@ public class JobRestController
 	public ResponseEntity<List<JobApplication>> appliedJobList()
 	{
 		List<JobApplication> jobapplist = jobDAO.jobApplications();
-		return new ResponseEntity<List<JobApplication>>(jobapplist, HttpStatus.OK);
+		
+		if(!jobapplist.isEmpty())
+		{
+			return new ResponseEntity<List<JobApplication>>(jobapplist, HttpStatus.OK);
+		}
+		else
+		{
+			return new ResponseEntity<List<JobApplication>>(jobapplist, HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@DeleteMapping("/application/delete/{jobappid}")
+	public ResponseEntity<?> deleteapp(@PathVariable int jobappid)
+	{
+		if(jobDAO.deletejobapp(jobappid))
+		{
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		}
+		else
+		{
+			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }
